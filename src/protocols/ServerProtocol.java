@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import sockets.SocketServer;
+import utils.SocketsUtil;
 
 /**
  *
@@ -35,12 +36,10 @@ public class ServerProtocol {
             )
     );
 
-
     public void setPreviousMessageStream(String previousMessageStream) {
         this.previousMessageStream = previousMessageStream;
     }
 
-    
     public String[] getActionStrings() {
         ArrayList<String> actionArrayList = new ArrayList<>();
 
@@ -52,11 +51,21 @@ public class ServerProtocol {
     }
 
     public void processRequest(int actionIndex) {
-        if (actionIndex != SEND_CONNECTION_STATUS) {
-            String newMessage = actions.get(actionIndex).replace("Request", "Send");
-            SocketServer.writeToClient(newMessage);
-            System.out.println(actions.get(actionIndex).replace("Request", "Send"));
+        String newMessage;
+
+        if (actionIndex == SEND_CONNECTION_STATUS) {
+            newMessage = SocketsUtil.getConnectionStatus();
+        } else {
+            newMessage = actions.get(actionIndex).replace("Request", "Send");
         }
+
+        SocketServer.writeToClient(newMessage);
+        System.out.printf("[SERVER]: %s", newMessage);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(SocketsUtil.getConnectionStatus());
+        System.out.println(SocketsUtil.getConnectionStatus());
     }
 
 }

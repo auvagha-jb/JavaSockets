@@ -31,6 +31,7 @@ import sockets.SocketClient;
 import utils.CountryUtil;
 import utils.FormUtil;
 import utils.RandomUtil;
+import utils.SocketsUtil;
 import utils.TimeUtil;
 
 /**
@@ -69,6 +70,8 @@ public class ClientApp extends javax.swing.JFrame {
         //make the JDateChooser editor uneditable
         manuFactureDate.getDateEditor().setEnabled(false);
         manuFactureDate.setDate(new Date());
+    
+        connectionStatusLabel.setText(SocketsUtil.getConnectionStatus());
     }
 
     private void initVariables() {
@@ -198,14 +201,7 @@ public class ClientApp extends javax.swing.JFrame {
         }
     }
 
-//    public static void updateToyComboBoxes(Toy toy) {
-//        setToyDetails();
-//        populateInfoComboBoxModels(0);
-//    }
-//
-//    public static void updateManufacturerComboBox(Manufacturer man) {
-//        
-//    }
+
     public static void updateToyComboBoxes(Toy toy) {
         updateToyIds(toy);
         updateToyInfo(toy);
@@ -279,7 +275,7 @@ public class ClientApp extends javax.swing.JFrame {
             );
         } catch (NullPointerException e) {
             System.err.println(e.getMessage());
-            toyFormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, "Some fields values are missing");
+            FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, "Some fields values are missing");
         }
 
         return toyInput;
@@ -315,6 +311,9 @@ public class ClientApp extends javax.swing.JFrame {
         sendInfoLabel = new javax.swing.JLabel();
         sendFeedbackTab = new javax.swing.JPanel();
         sendFeedbackLabel = new javax.swing.JLabel();
+        connnectionStatusPanel = new javax.swing.JPanel();
+        sendFeedbackLabel1 = new javax.swing.JLabel();
+        connectionStatusLabel = new javax.swing.JLabel();
         cardContainer = new javax.swing.JPanel();
         newToyPanel = new javax.swing.JPanel();
         name = new javax.swing.JTextField();
@@ -474,6 +473,45 @@ public class ClientApp extends javax.swing.JFrame {
         );
 
         sidePanel.add(sendFeedbackTab, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 240, 50));
+
+        connnectionStatusPanel.setBackground(new java.awt.Color(51, 51, 51));
+        connnectionStatusPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                connnectionStatusPanelMouseClicked(evt);
+            }
+        });
+
+        sendFeedbackLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        sendFeedbackLabel1.setForeground(new java.awt.Color(255, 255, 255));
+
+        connectionStatusLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        connectionStatusLabel.setForeground(new java.awt.Color(255, 255, 255));
+        connectionStatusLabel.setText("[CONNECTED]: PORT 23");
+
+        javax.swing.GroupLayout connnectionStatusPanelLayout = new javax.swing.GroupLayout(connnectionStatusPanel);
+        connnectionStatusPanel.setLayout(connnectionStatusPanelLayout);
+        connnectionStatusPanelLayout.setHorizontalGroup(
+            connnectionStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(connnectionStatusPanelLayout.createSequentialGroup()
+                .addGap(69, 69, 69)
+                .addComponent(sendFeedbackLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, connnectionStatusPanelLayout.createSequentialGroup()
+                .addContainerGap(44, Short.MAX_VALUE)
+                .addComponent(connectionStatusLabel)
+                .addGap(38, 38, 38))
+        );
+        connnectionStatusPanelLayout.setVerticalGroup(
+            connnectionStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(connnectionStatusPanelLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(sendFeedbackLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(connectionStatusLabel)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        sidePanel.add(connnectionStatusPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 500, 240, -1));
 
         jSplitPane1.setLeftComponent(sidePanel);
 
@@ -842,7 +880,7 @@ public class ClientApp extends javax.swing.JFrame {
         Message validationMessage = toyFormUtil.validateForm(formInput);
 
         if (!validationMessage.getStatus()) {
-            toyFormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
+            FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
 
         } else {//If validation passes
             clientProtocol.insertNewToy(Toys.INSERT_SUCCESS_MSG, formInput);
@@ -873,7 +911,7 @@ public class ClientApp extends javax.swing.JFrame {
         Message validationMessage = manufacturerFormUtil.validateForm(formInput);
 
         if (!validationMessage.getStatus()) {
-            manufacturerFormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
+            FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
 
         } else {//If validation passes
             clientProtocol.insertNewManufacturer(Manufacturers.INSERT_SUCCESS_MSG, formInput);
@@ -901,6 +939,10 @@ public class ClientApp extends javax.swing.JFrame {
         chooseAction(actionSelected);//Pick what action depending on what item was chosen 
     }//GEN-LAST:event_sendBtnActionPerformed
 
+    private void connnectionStatusPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connnectionStatusPanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_connnectionStatusPanelMouseClicked
+
     private void chooseAction(int actionIndex) {
         String defaultMessage = infoComboBox.getSelectedItem().toString();
 
@@ -914,14 +956,11 @@ public class ClientApp extends javax.swing.JFrame {
                 clientProtocol.sendMessage(getThankYouMessage(defaultMessage));
             }
 
-            case ClientProtocol.REQUEST_CONNECTION_STATUS -> {
-                clientProtocol.sendMessage(ClientProtocol.REQUEST_CONNECTION_STRING);
-            }
-
             default ->
                 //SEND_TOY_ID
                 //SEND_TOY_INFO
                 //SEND_MANUFACTURER_INFO
+                //REQUEST_CONNECTION_STATUS
                 clientProtocol.sendMessage(defaultMessage);
         }
     }
@@ -985,6 +1024,8 @@ public class ClientApp extends javax.swing.JFrame {
     private javax.swing.JPanel cardContainer;
     private javax.swing.JComboBox<String> chooseActionComboBox;
     private javax.swing.JTextField companyName;
+    private javax.swing.JLabel connectionStatusLabel;
+    private javax.swing.JPanel connnectionStatusPanel;
     private javax.swing.JComboBox<String> countryComboBox;
     private javax.swing.JTextField description;
     private javax.swing.JLabel descriptionLabel;
@@ -1012,6 +1053,7 @@ public class ClientApp extends javax.swing.JFrame {
     private javax.swing.JLabel priceLabel;
     private javax.swing.JButton sendBtn;
     private javax.swing.JLabel sendFeedbackLabel;
+    private javax.swing.JLabel sendFeedbackLabel1;
     private javax.swing.JPanel sendFeedbackPanel;
     private javax.swing.JPanel sendFeedbackTab;
     private javax.swing.JLabel sendInfoLabel;

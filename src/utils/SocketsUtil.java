@@ -26,6 +26,10 @@ public class SocketsUtil {
     private static final int MIN_PORT = 80;
     private static final int MAX_PORT = 8080;
     
+    public static final int WAITING = 0;
+    public static final int CONNECTED = 1;
+    public static final String[] connectionStatusMsg = {"[WAITING]", "[CONNECTED]"};
+    
     private static final int[] reservedPorts = {
         80, 443, //Apache
         3306, //MySQL
@@ -35,13 +39,23 @@ public class SocketsUtil {
     };
 
     public static void setSelectedPort() {
-        SocketsUtil.selectedPort = chooseRandomPort();
+        selectedPort = chooseRandomPort();
+    }
+    
+    public static void setSelectedPort(int port) {
+        selectedPort = port;
     }
 
     public static int getSelectedPort() {
-        return SocketsUtil.selectedPort;
+        return selectedPort;
     }
 
+    public static String getConnectionStatus() {
+        String status = SocketClient.isConnected() ? "[CONNECTED]" : "[DISCONNECTED]";
+        return String.format("%s: PORT %s", status, selectedPort);
+    }
+    
+    
     /**
      * Choose random port between min and max values e. between 80 and 8080
      *

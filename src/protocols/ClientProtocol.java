@@ -10,7 +10,6 @@ import database.Toys;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import models.Manufacturer;
 import models.Toy;

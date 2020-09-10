@@ -8,11 +8,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class NameServer {
-    private static final int PORT = 9090;
-
+    
     public static void main(String[] args) throws IOException {
         System.out.println("[SERVER] Waiting for client to connect");
-        ServerSocket listener = new ServerSocket(PORT);
+        ServerSocket listener = new ServerSocket(ServerController.NAME_SERVER_PORT);
 
         Socket client = listener.accept();//Establishes connection
         System.out.println("[SERVER] Client connected");
@@ -30,7 +29,7 @@ public class NameServer {
                 if (request.contains("name")) {
                     out.println(ServerController.getRandom());
                 } else {
-                    out.println("Command not recognized");
+                    out.println("Commnd not found. Type 'send name' to get a random name");
                 }
             }
         } finally {

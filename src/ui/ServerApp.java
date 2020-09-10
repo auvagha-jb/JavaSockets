@@ -29,11 +29,11 @@ public class ServerApp extends javax.swing.JFrame {
         initComponents();
         initVariables();
         populateChooseActionComboBox();
-        showPortNumber();
+        showConnectionStatus(SocketsUtil.WAITING, SocketsUtil.getSelectedPort());
     }
 
-    private void showPortNumber() {
-        portNumberLabel.setText(String.format("Running: Port %s", SocketsUtil.getSelectedPort()));
+    public static void showConnectionStatus(int status,int portNumber) {
+        portNumberLabel.setText(String.format("%s: PORT %s", SocketsUtil.connectionStatusMsg[status], portNumber));
     }
 
     private void initVariables() {
@@ -63,7 +63,6 @@ public class ServerApp extends javax.swing.JFrame {
         chooseActionComboBox.addActionListener(chooseActionComboBoxListener);
     }
 
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -106,7 +105,7 @@ public class ServerApp extends javax.swing.JFrame {
         toyServerLabel.setForeground(new java.awt.Color(255, 255, 255));
         toyServerLabel.setText("TOY SERVER");
 
-        portNumberLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        portNumberLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         portNumberLabel.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout bgPanelLayout = new javax.swing.GroupLayout(bgPanel);
@@ -164,6 +163,7 @@ public class ServerApp extends javax.swing.JFrame {
         // TODO add your handling code here:
         String previousMessageStream = messageTextArea.getText();
         int actionSelected = chooseActionComboBox.getSelectedIndex();
+        System.out.printf("Server selected action %s: %s\n", actionSelected, chooseActionComboBox.getSelectedItem().toString());
         //Write message to client
         serverProtocol.setPreviousMessageStream(previousMessageStream);
         serverProtocol.processRequest(actionSelected);
@@ -226,7 +226,7 @@ public class ServerApp extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> chooseActionComboBox;
     private javax.swing.JScrollPane jScrollPane2;
     private static javax.swing.JTextArea messageTextArea;
-    private javax.swing.JLabel portNumberLabel;
+    private static javax.swing.JLabel portNumberLabel;
     private javax.swing.JButton sendBtn;
     private javax.swing.JLabel toyServerLabel;
     // End of variables declaration//GEN-END:variables

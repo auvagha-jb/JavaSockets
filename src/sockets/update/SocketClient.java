@@ -1,5 +1,6 @@
-package sockets;
+package sockets.update;
 
+import sockets.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

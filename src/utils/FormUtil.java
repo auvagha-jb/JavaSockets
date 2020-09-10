@@ -51,7 +51,7 @@ public class FormUtil {
     }
     
     
-    public void errorFeedback(String title, String message) {
+    public static void errorFeedback(String title, String message) {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
