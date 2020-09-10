@@ -108,6 +108,7 @@ public class Toy {
     public static String NAME = "name";
     public static String DESCRIPTION = "description";
     public static String PRICE = "price";
+    public static String MANUFACTURER = "manufacturer";
     public static String MANUFACTURER_ID = "manufacturerId";
     public static String MANUFACTURE_DATE = "manufactureDate";
     public static String BATCH_NUMBER = "batchNumber";

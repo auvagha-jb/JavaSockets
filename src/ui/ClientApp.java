@@ -51,6 +51,7 @@ public class ClientApp extends javax.swing.JFrame {
     private static String[] toyInfo;
     private static String[] manufacturerInfo;
     private int manufacturerId;
+    private String manufacturer;
 
     /**
      * Creates new form ClientApp
@@ -61,7 +62,7 @@ public class ClientApp extends javax.swing.JFrame {
         initVariables();
         populateAllComboBoxes();
         initCardLayout();
-        setManufacturerId();
+        setManufacturerNameAndId();
     }
 
     private void modifyComponenets() {
@@ -135,23 +136,32 @@ public class ClientApp extends javax.swing.JFrame {
         ActionListener manufacturersComboBoxListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setManufacturerId();
+                setManufacturerNameAndId();
             }
         };
 
         manufacturerComboBox.addActionListener(manufacturersComboBoxListener);
     }
 
-    private void setManufacturerId() {
-        //Get the slected item as string without any whitespaces
-        String selectedItem = manufacturerComboBox.getSelectedItem().toString().replaceAll("\\s+", "");
-        String[] selectItemArray = selectedItem.split("-");
-        manufacturerId = Integer.parseInt(selectItemArray[0]);
-        System.out.printf("Manufacturer Id: %s\n", manufacturerId);
+    private void setManufacturerNameAndId() {
+        try {
+            //Get the slected item as string without any whitespaces
+            String selectedItem = manufacturerComboBox.getSelectedItem().toString().replaceAll("\\s+", "");
+            String[] selectItemArray = selectedItem.split("-");
+            manufacturerId = Integer.parseInt(selectItemArray[0]);
+            manufacturer = selectItemArray[1];
+            System.out.printf("Manufacturer Id: %s\n", manufacturerId);
+        } catch (NullPointerException e) {
+            System.err.println("No manufacturers yet");
+        }
     }
 
     private String getManufacturerId() {
         return Integer.toString(manufacturerId);
+    }
+
+    private String getManufacturer() {
+        return manufacturer;
     }
 
     private void populatechooseActionBox() {
@@ -172,16 +182,20 @@ public class ClientApp extends javax.swing.JFrame {
     }
 
     private static void populateInfoComboBoxModels(int i) {
-        ComboBoxModel[] models = new ComboBoxModel[5];
+        try {
+            ComboBoxModel[] models = new ComboBoxModel[6];
 
-        models[ClientProtocol.SEND_TOY_ID] = new DefaultComboBoxModel(toyIds);
-        models[ClientProtocol.SEND_TOY_INFO] = new DefaultComboBoxModel(toyInfo);
-        models[ClientProtocol.SEND_MANUFACTURER_INFO] = new DefaultComboBoxModel(manufacturerInfo);
+            models[ClientProtocol.SEND_TOY_ID] = new DefaultComboBoxModel(toyIds);
+            models[ClientProtocol.SEND_TOY_INFO] = new DefaultComboBoxModel(toyInfo);
+            models[ClientProtocol.SEND_MANUFACTURER_INFO] = new DefaultComboBoxModel(manufacturerInfo);
+            models[ClientProtocol.SEND_ALL_TOYS] = new DefaultComboBoxModel(new String[]{"<All Toy Info>"});
+            models[ClientProtocol.SEND_THANK_YOU] = new DefaultComboBoxModel(new String[]{"Thank you"});
+            models[ClientProtocol.REQUEST_CONNECTION_STATUS] = new DefaultComboBoxModel(new String[]{"Send Connection Status"});
 
-        models[ClientProtocol.SEND_ALL_TOYS] = new DefaultComboBoxModel(new String[]{"<All Toy Info>"});
-        models[ClientProtocol.SEND_THANK_YOU] = new DefaultComboBoxModel(new String[]{"Thank you"});
-
-        infoComboBox.setModel(models[i]);
+            infoComboBox.setModel(models[i]);
+        } catch (NullPointerException e) {
+            System.err.println("No toys to display yet");
+        }
     }
 
 //    public static void updateToyComboBoxes(Toy toy) {
@@ -193,22 +207,37 @@ public class ClientApp extends javax.swing.JFrame {
 //        
 //    }
     public static void updateToyComboBoxes(Toy toy) {
+        updateToyIds(toy);
+        updateToyInfo(toy);
+        populateInfoComboBoxModels(0);
+    }
+
+    private static void updateToyIds(Toy toy) {
         //Toy ids
-        List<String> toyIdsList = new ArrayList<>(Arrays.asList(toyIds));
+        List<String> toyIdsList;
+        toyIdsList = new ArrayList<>(Arrays.asList(toyIds));
         toyIdsList.add(toy.toyIdentificationToString());
         toyIds = toyIdsList.toArray(new String[0]);
+    }
 
+    private static void updateToyInfo(Toy toy) {
         //Toy info
         List<String> toyInfoList = new ArrayList<>(Arrays.asList(toyInfo));
         toyInfoList.add(toy.toyInformationToString());
-        toyInfo = toyIdsList.toArray(new String[0]);
-
-        populateInfoComboBoxModels(0);
+        toyInfo = toyInfoList.toArray(new String[0]);
     }
 
     public static void updateManufacturerComboBox(Manufacturer man) {
         //Manufacturer info
-        List<String> manufacturerInfoList = new ArrayList<>(Arrays.asList(manufacturerInfo));
+        List<String> manufacturerInfoList;
+
+        //Fail safe to handle null cases
+        if (manufacturerInfo != null) {
+            manufacturerInfoList = new ArrayList<>(Arrays.asList(manufacturerInfo));
+        } else {
+            manufacturerInfoList = new ArrayList<>();
+        }
+
         manufacturerInfoList.add(man.manufacturerInfoToString());
         manufacturerInfo = manufacturerInfoList.toArray(new String[0]);
         manufacturerComboBox.addItem(man.identificationDetailsToString());
@@ -242,6 +271,7 @@ public class ClientApp extends javax.swing.JFrame {
                     Map.ofEntries(Map.entry(Toy.NAME, name.getText()),
                             Map.entry(Toy.DESCRIPTION, description.getText()),
                             Map.entry(Toy.PRICE, price.getText()),
+                            Map.entry(Toy.MANUFACTURER, getManufacturer()),
                             Map.entry(Toy.MANUFACTURER_ID, getManufacturerId()),
                             Map.entry(Toy.MANUFACTURE_DATE, getDateString(manuFactureDate.getDate())),
                             Map.entry(Toy.BATCH_NUMBER, batchNumber.getText())
@@ -816,6 +846,7 @@ public class ClientApp extends javax.swing.JFrame {
 
         } else {//If validation passes
             clientProtocol.insertNewToy(Toys.INSERT_SUCCESS_MSG, formInput);
+            toyFormUtil.clearTextFields();
         }
 
     }//GEN-LAST:event_submitNewToyBtnActionPerformed
@@ -846,6 +877,7 @@ public class ClientApp extends javax.swing.JFrame {
 
         } else {//If validation passes
             clientProtocol.insertNewManufacturer(Manufacturers.INSERT_SUCCESS_MSG, formInput);
+            manufacturerFormUtil.clearTextFields();
         }
     }//GEN-LAST:event_submitNewManufacturerBtnActionPerformed
 
@@ -881,7 +913,7 @@ public class ClientApp extends javax.swing.JFrame {
             case ClientProtocol.SEND_THANK_YOU -> {   //Custom Logic..         
                 clientProtocol.sendMessage(getThankYouMessage(defaultMessage));
             }
-            
+
             case ClientProtocol.REQUEST_CONNECTION_STATUS -> {
                 clientProtocol.sendMessage(ClientProtocol.REQUEST_CONNECTION_STRING);
             }
@@ -896,17 +928,16 @@ public class ClientApp extends javax.swing.JFrame {
 
     private String getAllToys() {
         String allToys = "All toys:\n";
-        for(String toy : toyInfo) {
+        for (String toy : toyInfo) {
             allToys += String.format("%s\n", toy);
         }
         return allToys;
     }
-    
-    
-   private String getThankYouMessage(String message) {
-       String uniqueId = RandomUtil.getRandomId();
-       return new ThankYouMessage(uniqueId, message).messageToString();
-   }
+
+    private String getThankYouMessage(String message) {
+        String uniqueId = RandomUtil.getRandomId();
+        return new ThankYouMessage(uniqueId, message).messageToString();
+    }
 
     /**
      * @param args the command line arguments

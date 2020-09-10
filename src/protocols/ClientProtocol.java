@@ -75,7 +75,8 @@ public class ClientProtocol {
             Toy toy = new Toy(formInput);
             int toyCode = toysTable.insert(toy);
             toy.setToyCode(toyCode);
-
+            toy.setManufacturer(formInput.get(Toy.MANUFACTURER));
+            
             sendMessage(String.format("%s: %s", message, toy.toyInformationToString()));
             ClientApp.updateToyComboBoxes(toy);
 
@@ -103,7 +104,7 @@ public class ClientProtocol {
    }
 
     public void sendMessage(String newMessage) {
-        SocketClient.writeToServer(String.format("%s\n %s", previousMessageStream, newMessage));
+        SocketClient.writeToServer(newMessage);
         System.out.printf("%s\n", newMessage);
     }
 
