@@ -7,20 +7,21 @@ package ui;
 
 import javax.swing.JTextField;
 import sockets.SocketClient;
+import sockets.SocketServer;
 import utils.FormUtil;
 
 /**
  *
  * @author Jerry Auvagha
  */
-public class ClientLandingScreen extends javax.swing.JFrame {
+public class AppLandingScreen extends javax.swing.JFrame {
 
     private JTextField[] textFields;
 
     /**
      * Creates new form ClientLandingScree
      */
-    public ClientLandingScreen() {
+    public AppLandingScreen() {
         initComponents();
         initVariables();
     }
@@ -315,12 +316,12 @@ public class ClientLandingScreen extends javax.swing.JFrame {
 
         int port = getPortNumber();
         System.out.printf("Entered port %s", port);
-        
-        //Initialize socket with the port input
+
+        //Initialize the sockets with the port input
         SocketClient.initSocket(port);
 
         if (SocketClient.isConnected()) {
-            showClientApp();//Sow the client app interface
+            showClientAndServerApp();//Sow the client app interface
         }
 
     }//GEN-LAST:event_connectBtnActionPerformed
@@ -339,7 +340,8 @@ public class ClientLandingScreen extends javax.swing.JFrame {
         return port;
     }
 
-    private void showClientApp() {
+    private void showClientAndServerApp() {
+        new ServerApp().setVisible(true);
         new ClientApp().setVisible(true);
         dispose();
     }
@@ -361,23 +363,28 @@ public class ClientLandingScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AppLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AppLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AppLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AppLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClientLandingScreen().setVisible(true);
+                new AppLandingScreen().setVisible(true);
             }
         });
+        
+        //Initialize socket
+        SocketServer.initSocket();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

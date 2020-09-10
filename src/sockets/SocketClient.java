@@ -42,6 +42,8 @@ public class SocketClient {
     }
 
     public static void openClientSocket() {
+        initSocket(SocketsUtil.STATIC_PORT);//For ststic instances 
+        
         try {
             //Receiving new nessages
             while (true) {

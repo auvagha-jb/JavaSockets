@@ -28,7 +28,7 @@ public class SocketServer {
     private static DataOutputStream outputStream;
     private static String msgReceived;
     
-    private static void initSocket() {        
+    public static void initSocket() {        
         try {
             serverSocket = new ServerSocket(SocketsUtil.STATIC_PORT);//Static 
             
@@ -50,7 +50,7 @@ public class SocketServer {
     }
 
     public static void openServerSocket() {
-        initSocket();//inititalize socket variables
+        initSocket();//inititalize socket variables 
         System.out.printf("Selected Port SocketServer.initSocket %s\n", SocketsUtil.getSelectedPort());
            
         try {
