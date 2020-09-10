@@ -1,0 +1,7 @@
+[54,33,89] -> Lighter blue
+
+[60,63,65] -> Default Grey
+
+[54,33,89] -> Purple
+
+[255,0,51] -> Red
