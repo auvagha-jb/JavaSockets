@@ -15,7 +15,8 @@ You can retrieve the jar file versions used from the jar package or download the
 Run ui.ServerApp then ui.ClientApp in that order<br>
 
 
-## Finding your way around: The Packages
+## Finding your way around
+### The Packages
 * database -> Contains the database query logic
 * jars -> Contains the version of jar files used
 * models -> Contains the classes for the entities used in the project: Toy, Manufacturer e.t.c
