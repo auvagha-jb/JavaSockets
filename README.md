@@ -12,7 +12,7 @@ For any other IDE, follow the respective import instructions. For Intellij, you 
 You can retrieve the jar file versions used from the jar package or download the latest version to your machine<br>
 <br>
 **For Linux and Mac based systems: change the DATABASE_PATH in utils.DatabaseUtil to a valid local path in any unrestricted folder. No further action required for windows** <br>
-Run ui.ServerApp then ui.ClientApp in that order<br>
+Run ui.ServerApp then ui.ClientLandingScreen in that order<br>
 
 
 ## Finding your way around
