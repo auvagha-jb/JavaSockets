@@ -1,5 +1,5 @@
 # JavaSockets
-A Java Application to demonstrate socket functionality  
+A Java Application to demonstrate socket functionality in distributed systems
 
 ## Dependencies
 * JDK>=14
@@ -13,6 +13,7 @@ You can retrieve the jar file versions used from the jar package or download the
 <br>
 **For Linux and Mac based systems: change the DATABASE_PATH in utils.DatabaseUtil to a valid local path in any unrestricted folder. No further action required for windows** <br>
 Run ui.ServerApp then ui.ClientLandingScreen in that order<br>
+See the issues tab above for the details walkthrough of the program
 
 
 ## Finding your way around
