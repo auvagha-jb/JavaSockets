@@ -6,6 +6,7 @@
 package ui;
 
 import sockets.SocketClient;
+import sockets.multithreaded.SocketServer;
 import utils.FormUtil;
 import utils.SocketsUtil;
 
@@ -14,6 +15,7 @@ import utils.SocketsUtil;
  * @author Jerry Auvagha
  */
 public class SocketConnectionDialog extends javax.swing.JFrame {
+
 
     private SocketClient socketClient;
 
@@ -318,7 +320,6 @@ public class SocketConnectionDialog extends javax.swing.JFrame {
 
     private void connectBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connectBtnMouseClicked
         // TODO add your handling code here:
-
         int portEntered = getPortNumber();
         System.out.printf("Entered port %s", portEntered);
 
