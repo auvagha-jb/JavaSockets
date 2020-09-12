@@ -48,7 +48,7 @@ public class ClientApp extends javax.swing.JFrame {
     private JTextField[] manufacturerTextFields;
     private ClientProtocol clientProtocol;
     private static SocketClient socketClient;
-    
+
     private static String[] toyIds;
     private static String[] toyInfo;
     private static String[] manufacturerInfo;
@@ -67,11 +67,10 @@ public class ClientApp extends javax.swing.JFrame {
         setManufacturerNameAndId();
     }
 
-
     public static void setSocketClient(SocketClient socket) {
         socketClient = socket;
     }
-    
+
     private static void showInputPortDialog() {
         new SocketConnectionDialog().setVisible(true);
     }
@@ -86,7 +85,7 @@ public class ClientApp extends javax.swing.JFrame {
     public static void setConnectionStatusLabel() {
         connectionStatusLabel.setText(SocketsUtil.getConnectionStatus());
     }
-    
+
     public static void setConnectionBtnText() {
         connectBtn.setText("CONNECTED");
         connectBtn.setEnabled(false);
@@ -256,11 +255,20 @@ public class ClientApp extends javax.swing.JFrame {
         manufacturerComboBox.addItem(man.identificationDetailsToString());
     }
 
-    private void switchPanel(JPanel clickedTab) {
+    private void switchPanel(String panelName, JPanel clickedTab) {
         if (selectedTab == clickedTab) {
             return;
         }
 
+        if (!connectBtn.isEnabled()) {//Once connection has been 
+            cardLayout.show(cardContainer, panelName);
+            changeTablColor(clickedTab);
+        } else {
+            showInputPortDialog();
+        }
+    }
+
+    private void changeTablColor(JPanel clickedTab) {
         selectedTab.setBackground(new Color(0, 0, 0));
         clickedTab.setBackground(new Color(51, 51, 51));
         selectedTab = clickedTab;
@@ -885,14 +893,12 @@ public class ClientApp extends javax.swing.JFrame {
 
     private void newToyTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newToyTabMouseClicked
         // TODO add your handling code here:
-        cardLayout.show(cardContainer, "newToyPanel");
-        switchPanel(newToyTab);
+        switchPanel("newToyPanel", newToyTab);
     }//GEN-LAST:event_newToyTabMouseClicked
 
     private void newManufacturerTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newManufacturerTabMouseClicked
         // TODO add your handling code here:
-        cardLayout.show(cardContainer, "newManufacturerPanel");
-        switchPanel(newManufacturerTab);
+        switchPanel("newManufacturerPanel", newManufacturerTab);
     }//GEN-LAST:event_newManufacturerTabMouseClicked
 
     private void priceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceActionPerformed
@@ -929,14 +935,12 @@ public class ClientApp extends javax.swing.JFrame {
 
     private void sendInfoTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendInfoTabMouseClicked
         // TODO add your handling code here:
-        cardLayout.show(cardContainer, "sendInfoPanel");
-        switchPanel(sendInfoTab);
+        switchPanel("sendInfoPanel", sendInfoTab);
     }//GEN-LAST:event_sendInfoTabMouseClicked
 
     private void sendFeedbackTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendFeedbackTabMouseClicked
         // TODO add your handling code here:
-//        cardLayout.show(cardContainer, "sendFeedbackPanel");
-//        switchPanel(sendFeedbackTab);
+//        switchPanel("sendFeedbackPanel", sendFeedbackTab);
     }//GEN-LAST:event_sendFeedbackTabMouseClicked
 
     private void submitNewManufacturerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitNewManufacturerBtnActionPerformed
@@ -986,7 +990,7 @@ public class ClientApp extends javax.swing.JFrame {
     private void chooseAction(int actionIndex) {
         String defaultMessage = infoComboBox.getSelectedItem().toString();
         clientProtocol.setSocketClient(socketClient);
-        
+
         switch (actionIndex) {
 
             case ClientProtocol.SEND_ALL_TOYS -> {//Custom logic

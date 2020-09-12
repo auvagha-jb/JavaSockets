@@ -1,5 +1,6 @@
 package sockets.client;
 
+import sockets.server.SingleSocketServer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
