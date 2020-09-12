@@ -5,8 +5,7 @@
  */
 package ui;
 
-import sockets.SocketClient;
-import sockets.multithreaded.SocketServer;
+import sockets.client.SocketClient;
 import utils.FormUtil;
 import utils.SocketsUtil;
 
@@ -327,8 +326,9 @@ public class SocketConnectionDialog extends javax.swing.JFrame {
         socketClient = new SocketClient(portEntered);
         
         if (socketClient.isConnected()) {
+            System.out.printf("Client is connected on port %s\n", portEntered);
             //Open connection to client socket
-            new SocketClient(SocketsUtil.STATIC_PORT).start();
+            socketClient.start();
             ClientApp.setSocketClient(socketClient);
             ClientApp.setConnectionStatusLabel();
             ClientApp.setConnectionBtnText();

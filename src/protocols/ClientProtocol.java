@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import models.Manufacturer;
 import models.Toy;
-import sockets.SocketClient;
+import sockets.client.SocketClient;
 import ui.ClientApp;
 import utils.FormUtil;
 

@@ -1,4 +1,4 @@
-package sockets;
+package sockets.client;
 
 import examples.example2.*;
 import java.io.IOException;

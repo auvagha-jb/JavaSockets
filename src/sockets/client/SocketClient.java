@@ -1,4 +1,4 @@
-package sockets;
+package sockets.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,25 +22,26 @@ public final class SocketClient extends Thread {
     
     public SocketClient(int portNumber) {
         this.portNumber = portNumber;
-        initSocket(portNumber);
+        initSocket();
     }
     
-    public void initSocket(int portNumber) {
-        connectionStatus = true;
-
+    public void initSocket() {
         SocketsUtil.setSelectedPort(portNumber);
         System.out.printf("Selected Port SocketClient.initSocket %s\n", SocketsUtil.getSelectedPort());
 
         try {
-            socket = new Socket(SocketsUtil.SERVER_IP, SocketsUtil.STATIC_PORT);//Static
-//            socket = new Socket(SocketsUtil.SERVER_IP, portNumber);//Dynamic
+//            socket = new Socket(SocketsUtil.SERVER_IP, SocketsUtil.STATIC_PORT);//Static
+            socket = new Socket(SocketsUtil.SERVER_IP, portNumber);//Dynamic
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
-
+            connectionStatus = true;
         } catch (IOException ex) {
-            connectionStatus = false;
             FormUtil.errorFeedback("Connection Error", "Wrong port number entered. Please try again");
             //Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+            connectionStatus = false;
+        } catch(IllegalArgumentException e) {
+            FormUtil.errorFeedback(FormUtil.WRONG_FORMAT_TITLE, "The port entered is out of the accepted range");
+            connectionStatus = false;
         }
     }
 
@@ -48,7 +49,7 @@ public final class SocketClient extends Thread {
         return connectionStatus;
     }
 
-    public void openClientSocket(int portNumber) {
+    public void openClientSocket() {
         //Initialize socket with the port input
         
         try {
@@ -80,6 +81,6 @@ public final class SocketClient extends Thread {
     
     @Override
     public void run() {
-        openClientSocket(portNumber);
+        openClientSocket();
     }    
 }

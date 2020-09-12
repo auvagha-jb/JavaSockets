@@ -27,7 +27,7 @@ import models.Message;
 import models.ThankYouMessage;
 import models.Toy;
 import protocols.ClientProtocol;
-import sockets.SocketClient;
+import sockets.client.SocketClient;
 import utils.CountryUtil;
 import utils.FormUtil;
 import utils.RandomUtil;

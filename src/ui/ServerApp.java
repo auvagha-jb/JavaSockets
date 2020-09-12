@@ -8,8 +8,8 @@ package ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import protocols.ServerProtocol;
-import sockets.multithreaded.ClientHandler;
-import sockets.multithreaded.SocketServer;
+import sockets.server.ClientHandler;
+import sockets.server.SocketServer;
 import utils.SocketsUtil;
 import utils.TimeUtil;
 

@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sockets.multithreaded.ClientHandler;
-import sockets.multithreaded.SocketServer;
+import sockets.server.ClientHandler;
+import sockets.server.SocketServer;
 import utils.SocketsUtil;
 
 /**
