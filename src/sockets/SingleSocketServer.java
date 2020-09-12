@@ -19,16 +19,15 @@ import utils.SocketsUtil;
  *
  * @author Jerry Auvagha
  */
-public class SocketServer {
-
-    //Socket functionality -> These were static
+public class SingleSocketServer {
+    
     private static ServerSocket serverSocket;
     private static Socket socket;
     private static DataInputStream inputStream;
     private static DataOutputStream outputStream;
     private static String msgReceived;
     
-    private static void initSocket() {        
+    public static void initSocket() {        
         try {
             serverSocket = new ServerSocket(SocketsUtil.STATIC_PORT);//Static 
             
@@ -37,20 +36,20 @@ public class SocketServer {
 //            int randomPort = SocketsUtil.getSelectedPort();//Dynamic
 //            serverSocket = new ServerSocket(randomPort);
             
-            SocketsUtil.setSelectedPort(serverSocket.getLocalPort());//Set the new dynamic port
+            SocketsUtil.setSelectedPort();//Set the new dynamic port
             System.out.printf("Server selected: %s\n", SocketsUtil.getSelectedPort());
             
-            socket= serverSocket.accept();
+            socket = serverSocket.accept();
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
 
         } catch (IOException ex) {
-            Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SingleSocketServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void openServerSocket() {
-        initSocket();//inititalize socket variables
+        initSocket();//inititalize socket variables 
         System.out.printf("Selected Port SocketServer.initSocket %s\n", SocketsUtil.getSelectedPort());
            
         try {
@@ -61,7 +60,7 @@ public class SocketServer {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SingleSocketServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             SocketsUtil.closeClientSocket(inputStream, outputStream, socket);
         }
@@ -71,7 +70,7 @@ public class SocketServer {
         try {
             outputStream.writeUTF(message);
         } catch (IOException ex) {
-            Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SingleSocketServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

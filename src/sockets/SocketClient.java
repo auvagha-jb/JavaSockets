@@ -10,15 +10,22 @@ import ui.ClientApp;
 import utils.FormUtil;
 import utils.SocketsUtil;
 
-public class SocketClient {
+public final class SocketClient extends Thread {
 
-    private static Socket socket;
-    private static DataInputStream inputStream;
-    private static DataOutputStream outputStream;
-    private static String msgReceived;
+    private Socket socket;
+    private DataInputStream inputStream;
+    private DataOutputStream outputStream;
+    private final int portNumber;
+    private String msgReceived;
     private static boolean connectionStatus;
-
-    public static void initSocket(int portNumber) {
+    
+    
+    public SocketClient(int portNumber) {
+        this.portNumber = portNumber;
+        initSocket(portNumber);
+    }
+    
+    public void initSocket(int portNumber) {
         connectionStatus = true;
 
         SocketsUtil.setSelectedPort(portNumber);
@@ -26,7 +33,7 @@ public class SocketClient {
 
         try {
             socket = new Socket(SocketsUtil.SERVER_IP, SocketsUtil.STATIC_PORT);//Static
-//            socket = new Socket(SocketsUtil.SERVER_IP, SocketsUtil.getSelectedPort());//Dynamic
+//            socket = new Socket(SocketsUtil.SERVER_IP, portNumber);//Dynamic
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
 
@@ -37,11 +44,13 @@ public class SocketClient {
         }
     }
 
-    public static boolean isConnected() {
+    public boolean isConnected() {
         return connectionStatus;
     }
 
-    public static void openClientSocket() {
+    public void openClientSocket(int portNumber) {
+        //Initialize socket with the port input
+        
         try {
             //Receiving new nessages
             while (true) {
@@ -51,18 +60,26 @@ public class SocketClient {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SingleSocketServer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             SocketsUtil.closeClientSocket(inputStream, outputStream, socket);
         }
     }
 
-    public static void writeToServer(String message) {
+    public void writeToServer(String message) {
         try {
             outputStream.writeUTF(message);
         } catch (IOException ex) {
             Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    public static boolean getConnectionStatus() { 
+        return connectionStatus;
+    }
+    
+    @Override
+    public void run() {
+        openClientSocket(portNumber);
+    }    
 }

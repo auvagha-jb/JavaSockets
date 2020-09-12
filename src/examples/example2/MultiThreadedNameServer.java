@@ -12,7 +12,8 @@ public class MultiThreadedNameServer {
     private static ArrayList<ClientHandler> clients = new ArrayList<>();
     //Init the number of threads
     private static final ExecutorService pool = Executors.newFixedThreadPool(4);
-
+    
+    
     public static void main(String[] args) throws IOException {
         ServerSocket listener = new ServerSocket(ServerController.NAME_SERVER_PORT);
 

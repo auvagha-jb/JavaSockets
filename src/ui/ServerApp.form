@@ -61,7 +61,7 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="sendBtn" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="jScrollPane2" min="-2" pref="702" max="-2" attributes="0"/>
+                              <Component id="jScrollPane" min="-2" pref="702" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -78,7 +78,7 @@
                       <Component id="portNumberLabel" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" min="-2" pref="397" max="-2" attributes="0"/>
+                  <Component id="jScrollPane" min="-2" pref="397" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="sendBtn" min="-2" pref="39" max="-2" attributes="0"/>
@@ -90,7 +90,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+        <Container class="javax.swing.JScrollPane" name="jScrollPane">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -135,6 +135,7 @@
             <Property name="text" type="java.lang.String" value="REQUEST INFORMATION"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sendBtnMouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendBtnActionPerformed"/>
           </Events>
         </Component>

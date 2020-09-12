@@ -5,10 +5,14 @@
  */
 package protocols;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import sockets.SocketServer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sockets.multithreaded.ClientHandler;
+import sockets.multithreaded.SocketServer;
 import utils.SocketsUtil;
 
 /**
@@ -23,7 +27,7 @@ public class ServerProtocol {
     private static final int REQUEST_ALL_TOYS = 3;
     private static final int REQUEST_THANK_YOU = 4;
     private static final int SEND_CONNECTION_STATUS = 5;
-    private String previousMessageStream;
+    private static ClientHandler clientHandler;
 
     private static HashMap<Integer, String> actions = new HashMap(
             Map.ofEntries(
@@ -36,8 +40,8 @@ public class ServerProtocol {
             )
     );
 
-    public void setPreviousMessageStream(String previousMessageStream) {
-        this.previousMessageStream = previousMessageStream;
+    public static void setClientHandler(ClientHandler handler) {
+        clientHandler = handler;
     }
 
     public String[] getActionStrings() {
@@ -51,21 +55,26 @@ public class ServerProtocol {
     }
 
     public void processRequest(int actionIndex) {
+
         String newMessage;
 
         if (actionIndex == SEND_CONNECTION_STATUS) {
-            newMessage = SocketsUtil.getConnectionStatus();
+            newMessage = SocketServer.getConnectionStatus();
         } else {
             newMessage = actions.get(actionIndex).replace("Request", "Send");
         }
 
-        SocketServer.writeToClient(newMessage);
+        writeToClient(newMessage);
         System.out.printf("[SERVER]: %s", newMessage);
     }
-    
-    public static void main(String[] args) {
-        System.out.println(SocketsUtil.getConnectionStatus());
-        System.out.println(SocketsUtil.getConnectionStatus());
+
+    public void writeToClient(String message){
+
+        try {
+            clientHandler.getOutputStream().writeUTF(message);
+        } catch (IOException ex) {
+            Logger.getLogger(SocketServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

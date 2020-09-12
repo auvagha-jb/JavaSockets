@@ -5,28 +5,23 @@
  */
 package ui;
 
-import javax.swing.JTextField;
 import sockets.SocketClient;
 import utils.FormUtil;
+import utils.SocketsUtil;
 
 /**
  *
  * @author Jerry Auvagha
  */
-public class ClientLandingScreen extends javax.swing.JFrame {
+public class SocketConnectionDialog extends javax.swing.JFrame {
 
-    private JTextField[] textFields;
+    private SocketClient socketClient;
 
-    /**
+    /*
      * Creates new form ClientLandingScree
      */
-    public ClientLandingScreen() {
+    public SocketConnectionDialog() {
         initComponents();
-        initVariables();
-    }
-
-    private void initVariables() {
-        textFields = new JTextField[]{portNumber};
     }
 
     /**
@@ -40,7 +35,7 @@ public class ClientLandingScreen extends javax.swing.JFrame {
 
         jLabel2 = new javax.swing.JLabel();
         bgPanel = new javax.swing.JPanel();
-        portNumber = new javax.swing.JTextField();
+        portNumberField = new javax.swing.JTextField();
         connectBtn = new javax.swing.JButton();
         portNumberLabel = new javax.swing.JLabel();
         bgPanelLabel = new javax.swing.JLabel();
@@ -58,16 +53,23 @@ public class ClientLandingScreen extends javax.swing.JFrame {
         jLabel2.setText("jLabel2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Toy Sockets");
+        setResizable(false);
 
         bgPanel.setBackground(new java.awt.Color(0, 0, 0));
 
-        portNumber.setBackground(new java.awt.Color(255, 255, 255));
-        portNumber.setForeground(new java.awt.Color(0, 0, 0));
+        portNumberField.setBackground(new java.awt.Color(255, 255, 255));
+        portNumberField.setForeground(new java.awt.Color(0, 0, 0));
 
         connectBtn.setBackground(new java.awt.Color(255, 0, 51));
         connectBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         connectBtn.setForeground(new java.awt.Color(255, 255, 255));
         connectBtn.setText("CONNECT");
+        connectBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                connectBtnMouseClicked(evt);
+            }
+        });
         connectBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 connectBtnActionPerformed(evt);
@@ -235,7 +237,7 @@ public class ClientLandingScreen extends javax.swing.JFrame {
                 .addContainerGap(139, Short.MAX_VALUE)
                 .addGroup(bgPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgPanelLayout.createSequentialGroup()
-                        .addComponent(portNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(portNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(133, 133, 133))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgPanelLayout.createSequentialGroup()
                         .addComponent(portNumberLabel)
@@ -275,7 +277,7 @@ public class ClientLandingScreen extends javax.swing.JFrame {
                         .addGap(61, 61, 61)
                         .addComponent(portNumberLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(portNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(portNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bgPanelLayout.createSequentialGroup()
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(1, 1, 1)
@@ -311,37 +313,51 @@ public class ClientLandingScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void connectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectBtnActionPerformed
-        // TODO add your handling code here:
-
-        int port = getPortNumber();
-        System.out.printf("Entered port %s", port);
-        
-        //Initialize socket with the port input
-        SocketClient.initSocket(port);
-
-        if (SocketClient.isConnected()) {
-            showClientApp();//Sow the client app interface
-        }
 
     }//GEN-LAST:event_connectBtnActionPerformed
 
+    private void connectBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connectBtnMouseClicked
+        // TODO add your handling code here:
+
+        int portEntered = getPortNumber();
+        System.out.printf("Entered port %s", portEntered);
+
+        //Initialize socket with the port input
+        socketClient = new SocketClient(portEntered);
+        
+        if (socketClient.isConnected()) {
+            //Open connection to client socket
+            new SocketClient(SocketsUtil.STATIC_PORT).start();
+            ClientApp.setSocketClient(socketClient);
+            ClientApp.setConnectionStatusLabel();
+            ClientApp.setConnectionBtnText();
+            FormUtil.successFeedback("Connected", String.format("Socket connected successfully on port %s", SocketsUtil.getSelectedPort()));
+            dispose();
+        }
+    }//GEN-LAST:event_connectBtnMouseClicked
+
+    private void checkUserInput(String userInput) throws NullPointerException {
+        if (userInput.equals("")) {
+            portNumberField.getText();
+            throw new NullPointerException("Please enter port number");
+        }
+    }
+
     private int getPortNumber() {
         int port = 0;
+        String userInput = portNumberField.getText();
 
         try {
-            port = Integer.parseInt(portNumber.getText());
+            checkUserInput(userInput);//Check that field is not blank
+            port = Integer.parseInt(userInput);
+
         } catch (NullPointerException e) {
-            FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, "Please enter port number");
+            FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, e.getMessage());
         } catch (NumberFormatException e) {
             FormUtil.errorFeedback(FormUtil.WRONG_FORMAT_TITLE, "Please enter port number and ensure it is a number");
         }
 
         return port;
-    }
-
-    private void showClientApp() {
-        new ClientApp().setVisible(true);
-        dispose();
     }
 
     /**
@@ -361,21 +377,27 @@ public class ClientLandingScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SocketConnectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SocketConnectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SocketConnectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClientLandingScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SocketConnectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClientLandingScreen().setVisible(true);
+                new SocketConnectionDialog().setVisible(true);
             }
         });
     }
@@ -395,7 +417,7 @@ public class ClientLandingScreen extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JTextField portNumber;
+    private javax.swing.JTextField portNumberField;
     private javax.swing.JLabel portNumberLabel;
     // End of variables declaration//GEN-END:variables
 }

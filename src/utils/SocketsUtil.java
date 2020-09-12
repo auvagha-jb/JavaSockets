@@ -45,16 +45,16 @@ public class SocketsUtil {
     public static void setSelectedPort(int port) {
         selectedPort = port;
     }
+    
 
     public static int getSelectedPort() {
         return selectedPort;
     }
-
+    
     public static String getConnectionStatus() {
-        String status = SocketClient.isConnected() ? "[CONNECTED]" : "[DISCONNECTED]";
+        String status = SocketClient.getConnectionStatus() ? "[CONNECTED]" : "[DISCONNECTED]";
         return String.format("%s: PORT %s", status, selectedPort);
     }
-    
     
     /**
      * Choose random port between min and max values e. between 80 and 8080

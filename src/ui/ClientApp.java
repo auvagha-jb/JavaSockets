@@ -47,7 +47,8 @@ public class ClientApp extends javax.swing.JFrame {
     private JTextField[] toyTextFields;
     private JTextField[] manufacturerTextFields;
     private ClientProtocol clientProtocol;
-
+    private static SocketClient socketClient;
+    
     private static String[] toyIds;
     private static String[] toyInfo;
     private static String[] manufacturerInfo;
@@ -66,12 +67,29 @@ public class ClientApp extends javax.swing.JFrame {
         setManufacturerNameAndId();
     }
 
+
+    public static void setSocketClient(SocketClient socket) {
+        socketClient = socket;
+    }
+    
+    private static void showInputPortDialog() {
+        new SocketConnectionDialog().setVisible(true);
+    }
+
     private void modifyComponenets() {
         //make the JDateChooser editor uneditable
         manuFactureDate.getDateEditor().setEnabled(false);
         manuFactureDate.setDate(new Date());
-    
+        setConnectionStatusLabel();
+    }
+
+    public static void setConnectionStatusLabel() {
         connectionStatusLabel.setText(SocketsUtil.getConnectionStatus());
+    }
+    
+    public static void setConnectionBtnText() {
+        connectBtn.setText("CONNECTED");
+        connectBtn.setEnabled(false);
     }
 
     private void initVariables() {
@@ -201,7 +219,6 @@ public class ClientApp extends javax.swing.JFrame {
         }
     }
 
-
     public static void updateToyComboBoxes(Toy toy) {
         updateToyIds(toy);
         updateToyInfo(toy);
@@ -314,6 +331,7 @@ public class ClientApp extends javax.swing.JFrame {
         connnectionStatusPanel = new javax.swing.JPanel();
         sendFeedbackLabel1 = new javax.swing.JLabel();
         connectionStatusLabel = new javax.swing.JLabel();
+        connectBtn = new javax.swing.JButton();
         cardContainer = new javax.swing.JPanel();
         newToyPanel = new javax.swing.JPanel();
         name = new javax.swing.JTextField();
@@ -512,6 +530,22 @@ public class ClientApp extends javax.swing.JFrame {
         );
 
         sidePanel.add(connnectionStatusPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 500, 240, -1));
+
+        connectBtn.setBackground(new java.awt.Color(51, 51, 51));
+        connectBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        connectBtn.setForeground(new java.awt.Color(255, 255, 255));
+        connectBtn.setText("CONNECT");
+        connectBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                connectBtnMouseClicked(evt);
+            }
+        });
+        connectBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectBtnActionPerformed(evt);
+            }
+        });
+        sidePanel.add(connectBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 460, 110, 30));
 
         jSplitPane1.setLeftComponent(sidePanel);
 
@@ -934,8 +968,6 @@ public class ClientApp extends javax.swing.JFrame {
     private void sendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendBtnActionPerformed
         // TODO add your handling code here:
         int actionSelected = chooseActionComboBox.getSelectedIndex();
-        String previousMessageStream = messageTextArea.getText();
-        clientProtocol.setPreviousMessageStream(previousMessageStream);
         chooseAction(actionSelected);//Pick what action depending on what item was chosen 
     }//GEN-LAST:event_sendBtnActionPerformed
 
@@ -943,9 +975,18 @@ public class ClientApp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_connnectionStatusPanelMouseClicked
 
+    private void connectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectBtnActionPerformed
+        showInputPortDialog();//Show dialog for user to enter port number
+    }//GEN-LAST:event_connectBtnActionPerformed
+
+    private void connectBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connectBtnMouseClicked
+
+    }//GEN-LAST:event_connectBtnMouseClicked
+
     private void chooseAction(int actionIndex) {
         String defaultMessage = infoComboBox.getSelectedItem().toString();
-
+        clientProtocol.setSocketClient(socketClient);
+        
         switch (actionIndex) {
 
             case ClientProtocol.SEND_ALL_TOYS -> {//Custom logic
@@ -1007,6 +1048,10 @@ public class ClientApp extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -1014,8 +1059,10 @@ public class ClientApp extends javax.swing.JFrame {
                 new ClientApp().setVisible(true);
             }
         });
+
+//        showInputPortDialog();//Show dialog for user to enter port number
         //Open connection to client socket
-        SocketClient.openClientSocket();
+//        SocketClient.openClientSocket(SocketsUtil.STATIC_PORT);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1024,7 +1071,8 @@ public class ClientApp extends javax.swing.JFrame {
     private javax.swing.JPanel cardContainer;
     private javax.swing.JComboBox<String> chooseActionComboBox;
     private javax.swing.JTextField companyName;
-    private javax.swing.JLabel connectionStatusLabel;
+    private static javax.swing.JButton connectBtn;
+    private static javax.swing.JLabel connectionStatusLabel;
     private javax.swing.JPanel connnectionStatusPanel;
     private javax.swing.JComboBox<String> countryComboBox;
     private javax.swing.JTextField description;

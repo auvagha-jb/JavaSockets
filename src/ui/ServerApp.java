@@ -8,7 +8,8 @@ package ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import protocols.ServerProtocol;
-import sockets.SocketServer;
+import sockets.multithreaded.ClientHandler;
+import sockets.multithreaded.SocketServer;
 import utils.SocketsUtil;
 import utils.TimeUtil;
 
@@ -16,28 +17,33 @@ import utils.TimeUtil;
  *
  * @author Jerry Auvagha
  */
-public class ServerApp extends javax.swing.JFrame {
+public final class ServerApp extends javax.swing.JFrame {
 
     //I need this bool so that the text is not changed every single time the send option is selected
     private boolean sendActionWasSelected = false;
-    private ServerProtocol serverProtocol;
+    private static ServerProtocol serverProtocol;
 
     /**
      * Creates new form ClientApp
      */
     public ServerApp() {
         initComponents();
-        initVariables();
+        initServerProtocol();
         populateChooseActionComboBox();
         showConnectionStatus(SocketsUtil.WAITING, SocketsUtil.getSelectedPort());
     }
 
-    public static void showConnectionStatus(int status,int portNumber) {
+    public static void showConnectionStatus(int status, int portNumber) {
         portNumberLabel.setText(String.format("%s: PORT %s", SocketsUtil.connectionStatusMsg[status], portNumber));
     }
 
-    private void initVariables() {
+
+    public void initServerProtocol() {
         serverProtocol = new ServerProtocol();
+    }
+
+    public static void initSocketServer() {
+        new SocketServer().initSocket();
     }
 
     private void populateChooseActionComboBox() {
@@ -73,7 +79,7 @@ public class ServerApp extends javax.swing.JFrame {
     private void initComponents() {
 
         bgPanel = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane = new javax.swing.JScrollPane();
         messageTextArea = new javax.swing.JTextArea();
         chooseActionComboBox = new javax.swing.JComboBox<>();
         sendBtn = new javax.swing.JButton();
@@ -89,12 +95,17 @@ public class ServerApp extends javax.swing.JFrame {
         messageTextArea.setBackground(new java.awt.Color(255, 255, 255));
         messageTextArea.setColumns(20);
         messageTextArea.setRows(5);
-        jScrollPane2.setViewportView(messageTextArea);
+        jScrollPane.setViewportView(messageTextArea);
 
         sendBtn.setBackground(new java.awt.Color(255, 0, 51));
         sendBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         sendBtn.setForeground(new java.awt.Color(255, 255, 255));
         sendBtn.setText("REQUEST INFORMATION");
+        sendBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendBtnMouseClicked(evt);
+            }
+        });
         sendBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendBtnActionPerformed(evt);
@@ -126,7 +137,7 @@ public class ServerApp extends javax.swing.JFrame {
                                 .addComponent(chooseActionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(sendBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
         bgPanelLayout.setVerticalGroup(
@@ -137,7 +148,7 @@ public class ServerApp extends javax.swing.JFrame {
                     .addComponent(toyServerLabel)
                     .addComponent(portNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(bgPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sendBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -160,14 +171,16 @@ public class ServerApp extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendBtnActionPerformed
+
+    }//GEN-LAST:event_sendBtnActionPerformed
+
+    private void sendBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendBtnMouseClicked
         // TODO add your handling code here:
-        String previousMessageStream = messageTextArea.getText();
         int actionSelected = chooseActionComboBox.getSelectedIndex();
         System.out.printf("Server selected action %s: %s\n", actionSelected, chooseActionComboBox.getSelectedItem().toString());
         //Write message to client
-        serverProtocol.setPreviousMessageStream(previousMessageStream);
         serverProtocol.processRequest(actionSelected);
-    }//GEN-LAST:event_sendBtnActionPerformed
+    }//GEN-LAST:event_sendBtnMouseClicked
 
     public static void setReceivedMessage(String msgReceived) {
         String message = String.format("%s\n [CLIENT@%s]: %s", messageTextArea.getText(), TimeUtil.getLocalTimeNow(),
@@ -208,6 +221,14 @@ public class ServerApp extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -216,15 +237,19 @@ public class ServerApp extends javax.swing.JFrame {
             }
         });
 
+        initSocketServer();
+
         //Open connection to server socket
-        SocketServer.openServerSocket();
+//        SingleSocketServer.openServerSocket();
+//        new SocketServer().start();
+//        serverProtocol = new ServerProtocol(clientHandler);
     }
 
     //NOTE: The texaarea is static because is needs to be access from the main method, which is static
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bgPanel;
     private javax.swing.JComboBox<String> chooseActionComboBox;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane;
     private static javax.swing.JTextArea messageTextArea;
     private static javax.swing.JLabel portNumberLabel;
     private javax.swing.JButton sendBtn;

@@ -32,11 +32,15 @@ public class ClientProtocol {
     public static final int SEND_THANK_YOU = 4;
     public static final int REQUEST_CONNECTION_STATUS = 5;
     public static final String REQUEST_CONNECTION_STRING = "Send me the connection sts";
-    private String previousMessageStream;
 
     private final Toys toysTable;
     private final Manufacturers manufacturersTable;
+    private SocketClient socketClient;
 
+    public void setSocketClient(SocketClient socketClient) {
+        this.socketClient = socketClient;
+    }
+    
     private static HashMap<Integer, String> actions = new HashMap(
             Map.ofEntries(Map.entry(SEND_TOY_ID, "Send toy identification details (code,name)"),
                     Map.entry(SEND_TOY_INFO, "Send toy information"),
@@ -52,9 +56,6 @@ public class ClientProtocol {
         this.manufacturersTable = new Manufacturers();
     }
 
-    public void setPreviousMessageStream(String previousMessageStream) {
-        this.previousMessageStream = previousMessageStream;
-    }
 
     public String[] getActionStrings() {
         ArrayList<String> actionArrayList = new ArrayList<>();
@@ -103,7 +104,7 @@ public class ClientProtocol {
    }
 
     public void sendMessage(String newMessage) {
-        SocketClient.writeToServer(newMessage);
+        socketClient.writeToServer(newMessage);
         System.out.printf("%s\n", newMessage);
     }
 
