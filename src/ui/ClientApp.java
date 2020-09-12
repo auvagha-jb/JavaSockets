@@ -923,10 +923,11 @@ public class ClientApp extends javax.swing.JFrame {
             FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
 
         } else {//If validation passes
-            clientProtocol.insertNewToy(Toys.INSERT_SUCCESS_MSG, formInput);
-            toyFormUtil.clearTextFields();
+            boolean submmitted = clientProtocol.insertNewToy(Toys.INSERT_SUCCESS_MSG, formInput);
+            if (submmitted) {
+                toyFormUtil.clearTextFields();
+            }
         }
-
     }//GEN-LAST:event_submitNewToyBtnActionPerformed
 
     private void batchNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batchNumberActionPerformed
@@ -952,8 +953,10 @@ public class ClientApp extends javax.swing.JFrame {
             FormUtil.errorFeedback(FormUtil.MISSING_FIELDS_TITLE, validationMessage.getMessage());
 
         } else {//If validation passes
-            clientProtocol.insertNewManufacturer(Manufacturers.INSERT_SUCCESS_MSG, formInput);
-            manufacturerFormUtil.clearTextFields();
+            boolean submitted = clientProtocol.insertNewManufacturer(Manufacturers.INSERT_SUCCESS_MSG, formInput);
+            if (submitted) {
+                manufacturerFormUtil.clearTextFields();
+            }
         }
     }//GEN-LAST:event_submitNewManufacturerBtnActionPerformed
 

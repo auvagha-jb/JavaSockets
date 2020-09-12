@@ -40,7 +40,7 @@ public class ClientProtocol {
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
     }
-    
+
     private static HashMap<Integer, String> actions = new HashMap(
             Map.ofEntries(Map.entry(SEND_TOY_ID, "Send toy identification details (code,name)"),
                     Map.entry(SEND_TOY_INFO, "Send toy information"),
@@ -56,7 +56,6 @@ public class ClientProtocol {
         this.manufacturersTable = new Manufacturers();
     }
 
-
     public String[] getActionStrings() {
         ArrayList<String> actionArrayList = new ArrayList<>();
 
@@ -68,27 +67,29 @@ public class ClientProtocol {
     }
 
     /*For inserting new item (toy or maufacturer)*/
-    public void insertNewToy(String message, Map<String, String> formInput) {
-
+    public boolean insertNewToy(String message, Map<String, String> formInput) {
+        boolean submitted; 
         try {
 
             Toy toy = new Toy(formInput);
             int toyCode = toysTable.insert(toy);
             toy.setToyCode(toyCode);
             toy.setManufacturer(formInput.get(Toy.MANUFACTURER));
-            
+
             sendMessage(String.format("%s: %s", message, toy.toyInformationToString()));
             ClientApp.updateToyComboBoxes(toy);
-
+            submitted = true;
         } catch (NumberFormatException e) {
             System.err.println(e.getMessage());
             JOptionPane.showMessageDialog(null, "Ensure price and batch number are numbers", FormUtil.WRONG_FORMAT_TITLE, JOptionPane.ERROR_MESSAGE);
+            submitted = false;
         }
+        return submitted;
     }
 
-    
-   public void insertNewManufacturer(String message, Map<String, String> formInput) {
-       try {
+    public boolean insertNewManufacturer(String message, Map<String, String> formInput) {
+        boolean submitted;
+        try {
 
             Manufacturer man = new Manufacturer(formInput);
             int manufacturerId = manufacturersTable.insert(man);
@@ -96,16 +97,22 @@ public class ClientProtocol {
 
             sendMessage(String.format("%s: %s", message, man.manufacturerInfoToString()));
             ClientApp.updateManufacturerComboBox(man);
-
+            submitted = true;
         } catch (NumberFormatException e) {
             System.err.println(e.getMessage());
             JOptionPane.showMessageDialog(null, "Ensure zip code is a number", FormUtil.WRONG_FORMAT_TITLE, JOptionPane.ERROR_MESSAGE);
+            submitted = false;
         }
-   }
+        return submitted;
+    }
 
     public void sendMessage(String newMessage) {
-        socketClient.writeToServer(newMessage);
-        System.out.printf("%s\n", newMessage);
+        try {
+            socketClient.writeToServer(newMessage);
+            System.out.printf("%s\n", newMessage);
+        } catch (NullPointerException e) {
+            FormUtil.errorFeedback("No Server Communication", "Connect to server to open communication link");
+        }
     }
 
 }
