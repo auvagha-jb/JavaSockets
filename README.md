@@ -1,5 +1,5 @@
 # JavaSockets
-A Java Application to demonstrate socket functionality in distributed systems
+A Java Application to demonstrate socket functionality in distributed systems using a chat application
 
 ## Dependencies
 * JDK>=14
